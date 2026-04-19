@@ -1,0 +1,19 @@
+{
+  "name": "dgnotas",
+  "version": "0.0.1",
+  "private": true,
+  "description": "DG Notas — Emissão de notas fiscais para infoprodutores, com suporte humano.",
+  "scripts": {
+    "dev": "pnpm -r --parallel run dev",
+    "dev:backend": "pnpm --filter @dgnotas/backend dev",
+    "dev:frontend": "pnpm --filter @dgnotas/frontend dev",
+    "build": "pnpm -r run build",
+    "typecheck": "pnpm -r run typecheck",
+    "start:backend": "pnpm --filter @dgnotas/backend start"
+  },
+  "engines": {
+    "node": ">=18.18",
+    "pnpm": ">=8"
+  },
+  "packageManager": "pnpm@9.12.0"
+}

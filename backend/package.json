@@ -1,0 +1,38 @@
+{
+  "name": "@dgnotas/backend",
+  "version": "0.0.1",
+  "private": true,
+  "description": "API DG Notas",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "typecheck": "tsc --noEmit",
+    "auth:migrate": "better-auth migrate --config src/auth.ts --y",
+    "db:migrate": "node-pg-migrate up -m src/infrastructure/database/migrations -j sql",
+    "db:rollback": "node-pg-migrate down -m src/infrastructure/database/migrations -c 1 -j sql",
+    "db:create": "node-pg-migrate create -m src/infrastructure/database/migrations -j sql"
+  },
+  "dependencies": {
+    "better-auth": "^1.6.5",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "helmet": "^7.1.0",
+    "morgan": "^1.10.0",
+    "node-pg-migrate": "^8.0.4",
+    "pg": "^8.20.0",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@better-auth/cli": "^1.4.21",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/morgan": "^1.9.9",
+    "@types/node": "^20.12.7",
+    "@types/pg": "^8.20.0",
+    "tsx": "^4.7.2",
+    "typescript": "^5.4.5"
+  }
+}

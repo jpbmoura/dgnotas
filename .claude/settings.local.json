@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm --filter @dgnotas/backend add better-auth pg)",
+      "Bash(pnpm --filter @dgnotas/backend add -D @types/pg @better-auth/cli)",
+      "Bash(pnpm typecheck *)",
+      "Bash(pnpm --filter @dgnotas/frontend typecheck)",
+      "Bash(pnpm --filter @dgnotas/backend add node-pg-migrate)"
+    ]
+  }
+}
