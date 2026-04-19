@@ -3,9 +3,10 @@ import express, { Router, type Express } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
-import { toNodeHandler } from 'better-auth/node';
+import type { toNodeHandler as ToNodeHandlerFn } from 'better-auth/node';
 import { env } from './config/env';
-import { auth } from './auth';
+import { getAuth } from './auth';
+import { dynamicImport } from './utils/dynamic-import';
 import { healthRouter } from './routes/health';
 import { invoicesRouter } from './routes/invoices';
 import { requireAuth } from './middleware/require-auth';
@@ -18,7 +19,7 @@ import {
   empresaOwnershipMiddleware,
 } from './interface/composition-root';
 
-export function createApp(): Express {
+export async function createApp(): Promise<Express> {
   const app = express();
 
   app.use(helmet());
@@ -28,6 +29,12 @@ export function createApp(): Express {
       credentials: true,
     }),
   );
+
+  // better-auth é ESM-only; import dinâmico porque o backend compila pra CJS.
+  const { toNodeHandler } = await dynamicImport<{ toNodeHandler: typeof ToNodeHandlerFn }>(
+    'better-auth/node',
+  );
+  const auth = await getAuth();
 
   // Better Auth handler must be mounted BEFORE express.json (it reads raw body).
   app.all('/api/auth/*', toNodeHandler(auth));
