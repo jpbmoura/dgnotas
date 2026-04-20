@@ -13,10 +13,12 @@ import { Detalhe as NotaDetalhe } from './pages/Notas/Detalhe';
 import { NFSe } from './pages/Emissao/NFSe';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { AppShell } from './layouts/AppShell';
+import { Toaster } from './components/ui/sonner';
 
 export default function App() {
   return (
     <BrowserRouter>
+      <Toaster />
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/entrar" element={<LoginPage />} />

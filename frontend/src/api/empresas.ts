@@ -6,6 +6,14 @@ export type RegimeTributario = 'simples' | 'mei' | 'presumido' | 'real';
 export type CompanyStatus = 'ativa' | 'pendente' | 'inativa';
 export type Ambiente = 'homologacao' | 'producao';
 
+export type RegimeEspecial =
+  | 'microempresa_municipal'
+  | 'estimativa'
+  | 'sociedade_profissionais'
+  | 'cooperativa'
+  | 'mei'
+  | 'me_epp_simples';
+
 export interface CertificadoDigital {
   fileName: string;
   issuer: string;
@@ -43,17 +51,23 @@ export interface Empresa {
   nomeFantasia: string;
   /** 14 dígitos, sem máscara. Frontend formata para exibir. */
   cnpj: string;
+  isentoIE: boolean;
   inscricaoEstadual: string | null;
   inscricaoMunicipal: string | null;
   cnaePrincipal: string;
   cnaesSecundarios: string[];
   regimeTributario: RegimeTributario;
+  regimeEspecial: RegimeEspecial | null;
   status: CompanyStatus;
   endereco: Endereco;
   ambiente: Ambiente;
   numeracao: NumeracaoNotas;
   enviarEmailAutomatico: boolean;
   certificado: CertificadoDigital | null;
+  email: string | null;
+  /** Dígitos puros (DDD + número), 10 ou 11 caracteres. Frontend formata. */
+  telefone: string | null;
+  emailsRelatorios: string[];
   /** ISO timestamp (ou null quando a empresa ainda não emitiu nada). */
   ultimaEmissaoEm: string | null;
   createdAt: string;
@@ -72,16 +86,21 @@ export interface UpsertEmpresaPayload {
   cnpj: string;
   razaoSocial: string;
   nomeFantasia: string;
+  isentoIE: boolean;
   inscricaoEstadual: string | null;
   inscricaoMunicipal: string | null;
   cnaePrincipal: string;
   cnaesSecundarios: string[];
   regimeTributario: RegimeTributario;
+  regimeEspecial: RegimeEspecial | null;
   endereco: Endereco;
   ambiente: Ambiente;
   numeracao: NumeracaoNotas;
   enviarEmailAutomatico: boolean;
   certificado: CertificadoDigital | null;
+  email: string | null;
+  telefone: string | null;
+  emailsRelatorios: string[];
 }
 
 // ---------- Labels ----------

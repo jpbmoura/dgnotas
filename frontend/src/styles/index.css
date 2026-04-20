@@ -300,3 +300,113 @@ details summary::-webkit-details-marker { display: none; }
     height: 400px;
   }
 }
+
+/* Sonner toaster — DGNotas theme */
+[data-sonner-toaster] {
+  --width: 380px;
+  font-family: 'Geist', -apple-system, sans-serif;
+}
+
+.dg-toast {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 16px !important;
+  box-shadow:
+    0 20px 40px -20px rgba(10, 37, 64, 0.18),
+    0 4px 12px -2px rgba(10, 37, 64, 0.06) !important;
+  color: var(--ink) !important;
+  padding: 14px 16px !important;
+  font-size: 14px !important;
+  gap: 12px !important;
+  align-items: flex-start !important;
+}
+
+.dg-toast-title {
+  color: var(--ink);
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 1.4;
+  letter-spacing: -0.005em;
+}
+
+.dg-toast-desc {
+  color: var(--ink-muted);
+  font-size: 13px;
+  margin-top: 2px;
+  line-height: 1.45;
+}
+
+.dg-toast--success {
+  border-left: 3px solid var(--accent) !important;
+}
+.dg-toast--success [data-icon] {
+  color: var(--accent) !important;
+}
+
+.dg-toast--error {
+  border-left: 3px solid #DC2626 !important;
+}
+.dg-toast--error [data-icon] {
+  color: #DC2626 !important;
+}
+
+.dg-toast--warning {
+  border-left: 3px solid var(--warn) !important;
+}
+.dg-toast--warning [data-icon] {
+  color: var(--warn) !important;
+}
+
+.dg-toast--info {
+  border-left: 3px solid var(--blue) !important;
+}
+.dg-toast--info [data-icon] {
+  color: var(--blue) !important;
+}
+
+.dg-toast--default {
+  border-left: 3px solid var(--ink) !important;
+}
+
+.dg-toast [data-icon] {
+  margin-top: 1px;
+  flex-shrink: 0;
+}
+
+.dg-toast-action {
+  background: var(--ink) !important;
+  color: white !important;
+  border-radius: 8px !important;
+  font-weight: 500 !important;
+  font-size: 13px !important;
+  padding: 6px 12px !important;
+  height: auto !important;
+}
+.dg-toast-action:hover {
+  background: var(--ink-soft) !important;
+}
+
+.dg-toast-cancel {
+  background: white !important;
+  color: var(--ink) !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 8px !important;
+  font-weight: 500 !important;
+  font-size: 13px !important;
+  padding: 6px 12px !important;
+  height: auto !important;
+}
+
+.dg-toast-close {
+  background: var(--line-soft) !important;
+  border: 1px solid var(--line) !important;
+  color: var(--ink-muted) !important;
+  width: 20px !important;
+  height: 20px !important;
+  border-radius: 999px !important;
+  transition: all 0.15s;
+}
+.dg-toast-close:hover {
+  background: var(--line) !important;
+  color: var(--ink) !important;
+}

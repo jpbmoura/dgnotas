@@ -6,26 +6,37 @@ export type TipoItem = 'produto' | 'servico';
 export type StatusItem = 'ativo' | 'inativo';
 export type LocalIncidencia = 'prestador' | 'tomador';
 
+export type Plataforma =
+  | 'hotmart'
+  | 'eduzz'
+  | 'kiwify'
+  | 'hubla'
+  | 'perfectpay'
+  | 'outra';
+
+export type Garantia =
+  | 'sem_garantia'
+  | 'dias_7'
+  | 'dias_15'
+  | 'dias_30'
+  | 'dias_60'
+  | 'dias_90';
+
 export interface Retencao {
   enabled: boolean;
   aliq: number;
 }
 
-export interface IbsCbs {
-  cstIbsCbs: string;
-  cClassTrib: string;
-}
-
 export interface ProdutoConfig {
   unidade: string;
   ncm: string | null;
-  gtin: string | null;
-  sujeitoST: boolean;
   cest: string | null;
   origem: string;
   cfop: string;
   cstOrCsosn: string;
   aliqIcms: number;
+  cstIpi: string;
+  aliqIpi: number;
   cstPis: string;
   aliqPis: number;
   cstCofins: string;
@@ -51,10 +62,12 @@ interface ProdutoCommon {
   empresaId: string;
   codigo: string;
   nome: string;
+  nomeFiscal: string | null;
   descricao: string;
   valor: number;
   status: StatusItem;
-  ibsCbs: IbsCbs;
+  plataforma: Plataforma | null;
+  garantia: Garantia | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -83,9 +96,11 @@ export interface CreateProdutoPayload {
   tipo: TipoItem;
   codigo: string;
   nome: string;
+  nomeFiscal: string | null;
   descricao: string;
   valor: number;
-  ibsCbs: IbsCbs;
+  plataforma: Plataforma | null;
+  garantia: Garantia | null;
   produtoConfig: ProdutoConfig | null;
   servicoConfig: ServicoConfig | null;
 }
@@ -104,6 +119,24 @@ export const tipoLabel: Record<TipoItem, string> = {
 export const statusLabel: Record<StatusItem, string> = {
   ativo: 'Ativo',
   inativo: 'Inativo',
+};
+
+export const plataformaLabel: Record<Plataforma, string> = {
+  hotmart: 'Hotmart',
+  eduzz: 'Eduzz',
+  kiwify: 'Kiwify',
+  hubla: 'Hubla',
+  perfectpay: 'Perfectpay',
+  outra: 'Outra',
+};
+
+export const garantiaLabel: Record<Garantia, string> = {
+  sem_garantia: 'Sem garantia',
+  dias_7: '7 dias',
+  dias_15: '15 dias',
+  dias_30: '30 dias',
+  dias_60: '60 dias',
+  dias_90: '90 dias',
 };
 
 // ---------- Endpoints ----------

@@ -1,7 +1,9 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
+  garantiaLabel,
   getProduto,
+  plataformaLabel,
   statusLabel,
   tipoLabel,
   type Produto,
@@ -108,7 +110,6 @@ export function Detalhes() {
         <BasicoCard item={item} />
         <ClassificacaoCard item={item} />
         <TributacaoCard item={item} />
-        <IbsCbsCard item={item} />
       </div>
     </div>
   );
@@ -174,6 +175,15 @@ function BasicoCard({ item }: { item: Produto }) {
       <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
         <Row label="Código interno" value={item.codigo} mono />
         <Row label="Tipo" value={tipoLabel[item.tipo]} />
+        <Row label="Nome fiscal" value={item.nomeFiscal || '—'} />
+        <Row
+          label="Plataforma"
+          value={item.plataforma ? plataformaLabel[item.plataforma] : '—'}
+        />
+        <Row
+          label="Garantia"
+          value={item.garantia ? garantiaLabel[item.garantia] : '—'}
+        />
         {item.tipo === 'produto' && (
           <Row label="Unidade" value={item.produtoConfig.unidade || '—'} />
         )}
@@ -190,9 +200,7 @@ function ClassificacaoCard({ item }: { item: Produto }) {
       <Card title="Classificação fiscal">
         <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
           <Row label="NCM" value={p.ncm ?? '—'} mono />
-          <Row label="GTIN / EAN" value={p.gtin || 'Sem código'} mono />
-          <Row label="Sujeito à ST" value={p.sujeitoST ? 'Sim' : 'Não'} />
-          {p.sujeitoST && <Row label="CEST" value={p.cest || '—'} mono />}
+          <Row label="CEST" value={p.cest || '—'} mono />
           <Row label="Origem" value={origemLabel(p.origem)} />
           <Row label="CFOP padrão" value={p.cfop || '—'} mono />
         </dl>
@@ -223,6 +231,16 @@ function TributacaoCard({ item }: { item: Produto }) {
             <Row
               label="Alíquota ICMS"
               value={`${p.aliqIcms.toLocaleString('pt-BR')}%`}
+              mono
+            />
+          </dl>
+        </SubSection>
+        <SubSection label="IPI">
+          <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
+            <Row label="CST IPI" value={p.cstIpi || '—'} mono />
+            <Row
+              label="Alíquota IPI"
+              value={`${p.aliqIpi.toLocaleString('pt-BR')}%`}
               mono
             />
           </dl>
@@ -338,20 +356,6 @@ function RetencoesGrid({
         </div>
       ))}
     </div>
-  );
-}
-
-function IbsCbsCard({ item }: { item: Produto }) {
-  return (
-    <Card
-      title="IBS / CBS"
-      hint="Obrigatório desde janeiro de 2026 pela reforma tributária."
-    >
-      <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
-        <Row label="CST IBS/CBS" value={item.ibsCbs.cstIbsCbs} mono />
-        <Row label="cClassTrib" value={item.ibsCbs.cClassTrib} mono />
-      </dl>
-    </Card>
   );
 }
 
