@@ -14,11 +14,13 @@ export function empresaToOutput(empresa: Empresa): EmpresaOutput {
     razaoSocial: empresa.razaoSocial,
     nomeFantasia: empresa.nomeFantasia,
     cnpj: empresa.cnpj.toString(),
+    isentoIE: empresa.isentoIE,
     inscricaoEstadual: empresa.inscricaoEstadual,
     inscricaoMunicipal: empresa.inscricaoMunicipal,
     cnaePrincipal: empresa.cnaePrincipal.toString(),
     cnaesSecundarios: empresa.cnaesSecundarios.map((c) => c.toString()),
     regimeTributario: empresa.regimeTributario,
+    regimeEspecial: empresa.regimeEspecial,
     status: empresa.status,
     endereco: {
       cep: empresa.endereco.cep.toString(),
@@ -40,6 +42,9 @@ export function empresaToOutput(empresa: Empresa): EmpresaOutput {
           validUntil: toIsoDate(empresa.certificado.validUntil),
         }
       : null,
+    email: empresa.email,
+    telefone: empresa.telefone,
+    emailsRelatorios: [...empresa.emailsRelatorios],
     ultimaEmissaoEm: empresa.ultimaEmissaoEm
       ? empresa.ultimaEmissaoEm.toISOString()
       : null,

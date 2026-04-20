@@ -1,5 +1,6 @@
 import type {
   Ambiente,
+  RegimeEspecial,
   RegimeTributario,
   StatusEmpresa,
 } from '../../domain/entities/empresa';
@@ -13,11 +14,13 @@ export interface CreateEmpresaInput {
   razaoSocial: string;
   nomeFantasia: string;
   cnpj: string;
+  isentoIE: boolean;
   inscricaoEstadual: string | null;
   inscricaoMunicipal: string | null;
   cnaePrincipal: string;
   cnaesSecundarios: string[];
   regimeTributario: RegimeTributario;
+  regimeEspecial: RegimeEspecial | null;
   endereco: {
     cep: string;
     logradouro: string;
@@ -42,6 +45,9 @@ export interface CreateEmpresaInput {
     /** ISO yyyy-mm-dd */
     validUntil: string;
   } | null;
+  email: string | null;
+  telefone: string | null;
+  emailsRelatorios: string[];
 }
 
 /**
@@ -60,11 +66,13 @@ export interface EmpresaOutput {
   razaoSocial: string;
   nomeFantasia: string;
   cnpj: string;
+  isentoIE: boolean;
   inscricaoEstadual: string | null;
   inscricaoMunicipal: string | null;
   cnaePrincipal: string;
   cnaesSecundarios: string[];
   regimeTributario: RegimeTributario;
+  regimeEspecial: RegimeEspecial | null;
   status: StatusEmpresa;
   endereco: {
     cep: string;
@@ -89,6 +97,9 @@ export interface EmpresaOutput {
     holder: string;
     validUntil: string;
   } | null;
+  email: string | null;
+  telefone: string | null;
+  emailsRelatorios: string[];
   ultimaEmissaoEm: string | null;
   createdAt: string;
   updatedAt: string;

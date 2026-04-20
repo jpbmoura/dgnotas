@@ -1,4 +1,10 @@
-import { Empresa, type Ambiente, type RegimeTributario, type StatusEmpresa } from '../../../domain/entities/empresa';
+import {
+  Empresa,
+  type Ambiente,
+  type RegimeEspecial,
+  type RegimeTributario,
+  type StatusEmpresa,
+} from '../../../domain/entities/empresa';
 import { CNPJ } from '../../../domain/value-objects/cnpj';
 import { CEP } from '../../../domain/value-objects/cep';
 import { CNAE } from '../../../domain/value-objects/cnae';
@@ -9,11 +15,13 @@ export interface EmpresaRow {
   razao_social: string;
   nome_fantasia: string;
   cnpj: string;
+  isento_ie: boolean;
   inscricao_estadual: string | null;
   inscricao_municipal: string | null;
   cnae_principal: string;
   cnaes_secundarios: string[];
   regime_tributario: RegimeTributario;
+  regime_especial: RegimeEspecial | null;
   status: StatusEmpresa;
   cep: string;
   logradouro: string;
@@ -32,6 +40,9 @@ export interface EmpresaRow {
   certificado_issuer: string | null;
   certificado_holder: string | null;
   certificado_valid_until: Date | string | null;
+  email: string | null;
+  telefone: string | null;
+  emails_relatorios: string[];
   ultima_emissao_em: Date | string | null;
   created_at: Date | string;
   updated_at: Date | string;
@@ -64,11 +75,13 @@ export const empresaMapper = {
       razaoSocial: row.razao_social,
       nomeFantasia: row.nome_fantasia,
       cnpj,
+      isentoIE: row.isento_ie,
       inscricaoEstadual: row.inscricao_estadual,
       inscricaoMunicipal: row.inscricao_municipal,
       cnaePrincipal,
       cnaesSecundarios,
       regimeTributario: row.regime_tributario,
+      regimeEspecial: row.regime_especial,
       status: row.status,
       endereco: {
         cep,
@@ -88,6 +101,9 @@ export const empresaMapper = {
       },
       enviarEmailAutomatico: row.enviar_email_automatico,
       certificado,
+      email: row.email,
+      telefone: row.telefone,
+      emailsRelatorios: row.emails_relatorios ?? [],
       ultimaEmissaoEm: row.ultima_emissao_em ? toDate(row.ultima_emissao_em) : null,
       createdAt: toDate(row.created_at),
       updatedAt: toDate(row.updated_at),

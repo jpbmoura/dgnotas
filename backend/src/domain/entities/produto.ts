@@ -5,6 +5,30 @@ export type TipoItem = 'produto' | 'servico';
 export type StatusItem = 'ativo' | 'inativo';
 export type LocalIncidencia = 'prestador' | 'tomador';
 
+/**
+ * Plataformas onde o infoprodutor tipicamente vende.
+ * Valor `'outra'` cobre qualquer plataforma não listada.
+ */
+export type Plataforma =
+  | 'hotmart'
+  | 'eduzz'
+  | 'kiwify'
+  | 'hubla'
+  | 'perfectpay'
+  | 'outra';
+
+/**
+ * Período de garantia expresso em dias. Valores discretos que cobrem os prazos
+ * mais comuns do mercado de infoproduto (CDC mínimo 7 dias; padrão prático 30).
+ */
+export type Garantia =
+  | 'sem_garantia'
+  | 'dias_7'
+  | 'dias_15'
+  | 'dias_30'
+  | 'dias_60'
+  | 'dias_90';
+
 export interface Retencao {
   enabled: boolean;
   aliq: number;
@@ -13,13 +37,13 @@ export interface Retencao {
 export interface ProdutoConfig {
   unidade: string;
   ncm: NCM | null;
-  gtin: string | null;
-  sujeitoST: boolean;
   cest: string | null;
   origem: string;
   cfop: string;
   cstOrCsosn: string;
   aliqIcms: number;
+  cstIpi: string;
+  aliqIpi: number;
   cstPis: string;
   aliqPis: number;
   cstCofins: string;
@@ -40,20 +64,17 @@ export interface ServicoConfig {
   retInss: Retencao;
 }
 
-export interface IbsCbs {
-  cstIbsCbs: string;
-  cClassTrib: string;
-}
-
 export interface ProdutoProps {
   empresaId: string;
   tipo: TipoItem;
   codigo: string;
   nome: string;
+  nomeFiscal: string | null;
   descricao: string;
   valor: number;
   status: StatusItem;
-  ibsCbs: IbsCbs;
+  plataforma: Plataforma | null;
+  garantia: Garantia | null;
   produtoConfig: ProdutoConfig | null;
   servicoConfig: ServicoConfig | null;
   createdAt: Date;
@@ -81,9 +102,11 @@ export class Produto extends AggregateRoot<ProdutoProps> {
     tipo: TipoItem;
     codigo: string;
     nome: string;
+    nomeFiscal: string | null;
     descricao: string;
     valor: number;
-    ibsCbs: IbsCbs;
+    plataforma: Plataforma | null;
+    garantia: Garantia | null;
     produtoConfig: ProdutoConfig | null;
     servicoConfig: ServicoConfig | null;
     now: Date;
@@ -94,10 +117,12 @@ export class Produto extends AggregateRoot<ProdutoProps> {
         tipo: input.tipo,
         codigo: input.codigo.trim(),
         nome: input.nome.trim(),
+        nomeFiscal: normalizeOptional(input.nomeFiscal),
         descricao: input.descricao,
         valor: input.valor,
         status: 'ativo',
-        ibsCbs: input.ibsCbs,
+        plataforma: input.plataforma,
+        garantia: input.garantia,
         produtoConfig: input.tipo === 'produto' ? input.produtoConfig : null,
         servicoConfig: input.tipo === 'servico' ? input.servicoConfig : null,
         createdAt: input.now,
@@ -119,10 +144,12 @@ export class Produto extends AggregateRoot<ProdutoProps> {
   get tipo(): TipoItem { return this.props.tipo; }
   get codigo(): string { return this.props.codigo; }
   get nome(): string { return this.props.nome; }
+  get nomeFiscal(): string | null { return this.props.nomeFiscal; }
   get descricao(): string { return this.props.descricao; }
   get valor(): number { return this.props.valor; }
   get status(): StatusItem { return this.props.status; }
-  get ibsCbs(): IbsCbs { return this.props.ibsCbs; }
+  get plataforma(): Plataforma | null { return this.props.plataforma; }
+  get garantia(): Garantia | null { return this.props.garantia; }
   get produtoConfig(): ProdutoConfig | null { return this.props.produtoConfig; }
   get servicoConfig(): ServicoConfig | null { return this.props.servicoConfig; }
   get createdAt(): Date { return this.props.createdAt; }
@@ -139,21 +166,24 @@ export class Produto extends AggregateRoot<ProdutoProps> {
   atualizar(input: {
     codigo: string;
     nome: string;
+    nomeFiscal: string | null;
     descricao: string;
     valor: number;
     status: StatusItem;
-    ibsCbs: IbsCbs;
+    plataforma: Plataforma | null;
+    garantia: Garantia | null;
     produtoConfig: ProdutoConfig | null;
     servicoConfig: ServicoConfig | null;
     now: Date;
   }): void {
     this.props.codigo = input.codigo.trim();
     this.props.nome = input.nome.trim();
+    this.props.nomeFiscal = normalizeOptional(input.nomeFiscal);
     this.props.descricao = input.descricao;
     this.props.valor = input.valor;
     this.props.status = input.status;
-    this.props.ibsCbs = input.ibsCbs;
-    // Mantém o tipo atual; ignora o config do outro tipo.
+    this.props.plataforma = input.plataforma;
+    this.props.garantia = input.garantia;
     if (this.props.tipo === 'produto') {
       this.props.produtoConfig = input.produtoConfig;
       this.props.servicoConfig = null;
@@ -182,6 +212,7 @@ export class Produto extends AggregateRoot<ProdutoProps> {
       }
       const p = this.props.produtoConfig;
       assertAliquota(p.aliqIcms, 'aliqIcms');
+      assertAliquota(p.aliqIpi, 'aliqIpi');
       assertAliquota(p.aliqPis, 'aliqPis');
       assertAliquota(p.aliqCofins, 'aliqCofins');
     } else {
@@ -210,4 +241,10 @@ function assertAliquota(v: number, nome: string): void {
   if (v < 0 || v > 100) {
     throw new Error(`${nome} fora da faixa [0, 100]: ${v}`);
   }
+}
+
+function normalizeOptional(value: string | null): string | null {
+  if (value === null) return null;
+  const trimmed = value.trim();
+  return trimmed === '' ? null : trimmed;
 }

@@ -26,7 +26,6 @@ export class UpdateProdutoUseCase {
       throw new NotFoundError('produto', produtoId);
     }
 
-    // Se o código mudou, garante que não colide com outro produto da mesma empresa.
     if (input.codigo.trim() !== produto.codigo) {
       const colisao = await this.produtoRepo.existsByEmpresaAndCodigo(
         empresaId,
@@ -50,13 +49,13 @@ export class UpdateProdutoUseCase {
       produtoConfig = {
         unidade: cfg.unidade,
         ncm,
-        gtin: nullIfBlank(cfg.gtin),
-        sujeitoST: cfg.sujeitoST,
         cest: nullIfBlank(cfg.cest),
         origem: cfg.origem,
         cfop: cfg.cfop,
         cstOrCsosn: cfg.cstOrCsosn,
         aliqIcms: cfg.aliqIcms,
+        cstIpi: cfg.cstIpi,
+        aliqIpi: cfg.aliqIpi,
         cstPis: cfg.cstPis,
         aliqPis: cfg.aliqPis,
         cstCofins: cfg.cstCofins,
@@ -85,10 +84,12 @@ export class UpdateProdutoUseCase {
     produto.atualizar({
       codigo: input.codigo,
       nome: input.nome,
+      nomeFiscal: input.nomeFiscal,
       descricao: input.descricao,
       valor: input.valor,
       status: input.status,
-      ibsCbs: { ...input.ibsCbs },
+      plataforma: input.plataforma,
+      garantia: input.garantia,
       produtoConfig,
       servicoConfig,
       now: this.clock.now(),

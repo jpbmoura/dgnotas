@@ -1,5 +1,7 @@
 import type {
+  Garantia,
   LocalIncidencia,
+  Plataforma,
   Retencao,
   StatusItem,
   TipoItem,
@@ -15,13 +17,13 @@ import type {
 export interface ProdutoConfigInput {
   unidade: string;
   ncm: string | null;
-  gtin: string | null;
-  sujeitoST: boolean;
   cest: string | null;
   origem: string;
   cfop: string;
   cstOrCsosn: string;
   aliqIcms: number;
+  cstIpi: string;
+  aliqIpi: number;
   cstPis: string;
   aliqPis: number;
   cstCofins: string;
@@ -42,19 +44,16 @@ export interface ServicoConfigInput {
   retInss: Retencao;
 }
 
-export interface IbsCbsInput {
-  cstIbsCbs: string;
-  cClassTrib: string;
-}
-
 export interface CreateProdutoInput {
   empresaId: string;
   tipo: TipoItem;
   codigo: string;
   nome: string;
+  nomeFiscal: string | null;
   descricao: string;
   valor: number;
-  ibsCbs: IbsCbsInput;
+  plataforma: Plataforma | null;
+  garantia: Garantia | null;
   /** Obrigatório quando tipo='produto'; use case rejeita se ausente. */
   produtoConfig: ProdutoConfigInput | null;
   /** Obrigatório quando tipo='servico'; use case rejeita se ausente. */
@@ -71,10 +70,12 @@ export interface ProdutoOutput {
   tipo: TipoItem;
   codigo: string;
   nome: string;
+  nomeFiscal: string | null;
   descricao: string;
   valor: number;
   status: StatusItem;
-  ibsCbs: IbsCbsInput;
+  plataforma: Plataforma | null;
+  garantia: Garantia | null;
   produtoConfig: ProdutoConfigInput | null;
   servicoConfig: ServicoConfigInput | null;
   createdAt: string;

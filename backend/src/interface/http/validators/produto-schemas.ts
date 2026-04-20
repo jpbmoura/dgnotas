@@ -5,21 +5,16 @@ const retencaoSchema = z.object({
   aliq: z.number().min(0).max(100),
 });
 
-const ibsCbsSchema = z.object({
-  cstIbsCbs: z.string().trim().min(1),
-  cClassTrib: z.string().trim().min(1),
-});
-
 const produtoConfigSchema = z.object({
   unidade: z.string().trim().min(1),
   ncm: z.string().nullable(),
-  gtin: z.string().nullable().optional(),
-  sujeitoST: z.boolean(),
   cest: z.string().nullable().optional(),
   origem: z.string().trim().min(1),
   cfop: z.string().trim().min(1),
   cstOrCsosn: z.string().trim().min(1),
   aliqIcms: z.number().min(0).max(100),
+  cstIpi: z.string().trim().min(1),
+  aliqIpi: z.number().min(0).max(100),
   cstPis: z.string().trim().min(1),
   aliqPis: z.number().min(0).max(100),
   cstCofins: z.string().trim().min(1),
@@ -42,6 +37,19 @@ const servicoConfigSchema = z.object({
 
 const tipoSchema = z.enum(['produto', 'servico']);
 const statusSchema = z.enum(['ativo', 'inativo']);
+const plataformaSchema = z
+  .enum(['hotmart', 'eduzz', 'kiwify', 'hubla', 'perfectpay', 'outra'])
+  .nullable()
+  .optional();
+const garantiaSchema = z
+  .enum(['sem_garantia', 'dias_7', 'dias_15', 'dias_30', 'dias_60', 'dias_90'])
+  .nullable()
+  .optional();
+const nomeFiscalSchema = z
+  .string()
+  .trim()
+  .nullable()
+  .optional();
 
 /**
  * Create body. Valida superset e faz refine:
@@ -53,9 +61,11 @@ export const createProdutoBodySchema = z
     tipo: tipoSchema,
     codigo: z.string().trim().min(1),
     nome: z.string().trim().min(1),
+    nomeFiscal: nomeFiscalSchema,
     descricao: z.string().default(''),
     valor: z.number().min(0),
-    ibsCbs: ibsCbsSchema,
+    plataforma: plataformaSchema,
+    garantia: garantiaSchema,
     produtoConfig: produtoConfigSchema.nullable().optional(),
     servicoConfig: servicoConfigSchema.nullable().optional(),
   })
@@ -74,10 +84,12 @@ export const createProdutoBodySchema = z
 export const updateProdutoBodySchema = z.object({
   codigo: z.string().trim().min(1),
   nome: z.string().trim().min(1),
+  nomeFiscal: nomeFiscalSchema,
   descricao: z.string().default(''),
   valor: z.number().min(0),
   status: statusSchema,
-  ibsCbs: ibsCbsSchema,
+  plataforma: plataformaSchema,
+  garantia: garantiaSchema,
   produtoConfig: produtoConfigSchema.nullable().optional(),
   servicoConfig: servicoConfigSchema.nullable().optional(),
 });

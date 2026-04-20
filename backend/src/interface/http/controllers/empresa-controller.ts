@@ -36,6 +36,9 @@ export class EmpresaController {
       ...body,
       inscricaoEstadual: body.inscricaoEstadual ?? null,
       inscricaoMunicipal: body.inscricaoMunicipal ?? null,
+      regimeEspecial: body.regimeEspecial ?? null,
+      email: body.email ?? null,
+      telefone: body.telefone ?? null,
       endereco: {
         ...body.endereco,
         complemento: body.endereco.complemento ?? null,
@@ -62,6 +65,9 @@ export class EmpresaController {
         ...body,
         inscricaoEstadual: body.inscricaoEstadual ?? null,
         inscricaoMunicipal: body.inscricaoMunicipal ?? null,
+        regimeEspecial: body.regimeEspecial ?? null,
+        email: body.email ?? null,
+        telefone: body.telefone ?? null,
         endereco: {
           ...body.endereco,
           complemento: body.endereco.complemento ?? null,

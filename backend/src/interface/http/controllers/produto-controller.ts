@@ -38,9 +38,11 @@ export class ProdutoController {
       tipo: body.tipo,
       codigo: body.codigo,
       nome: body.nome,
+      nomeFiscal: normalizeNomeFiscal(body.nomeFiscal),
       descricao: body.descricao,
       valor: body.valor,
-      ibsCbs: body.ibsCbs,
+      plataforma: body.plataforma ?? null,
+      garantia: body.garantia ?? null,
       produtoConfig: normalizeProdutoConfig(body.produtoConfig),
       servicoConfig: normalizeServicoConfig(body.servicoConfig),
     });
@@ -65,10 +67,12 @@ export class ProdutoController {
       input: {
         codigo: body.codigo,
         nome: body.nome,
+        nomeFiscal: normalizeNomeFiscal(body.nomeFiscal),
         descricao: body.descricao,
         valor: body.valor,
         status: body.status,
-        ibsCbs: body.ibsCbs,
+        plataforma: body.plataforma ?? null,
+        garantia: body.garantia ?? null,
         produtoConfig: normalizeProdutoConfig(body.produtoConfig),
         servicoConfig: normalizeServicoConfig(body.servicoConfig),
       },
@@ -86,6 +90,12 @@ export class ProdutoController {
   };
 }
 
+function normalizeNomeFiscal(v: string | null | undefined): string | null {
+  if (v === null || v === undefined) return null;
+  const t = v.trim();
+  return t === '' ? null : t;
+}
+
 function normalizeProdutoConfig(
   cfg: z.infer<typeof createProdutoBodySchema>['produtoConfig'],
 ) {
@@ -93,13 +103,13 @@ function normalizeProdutoConfig(
   return {
     unidade: cfg.unidade,
     ncm: cfg.ncm,
-    gtin: cfg.gtin ?? null,
-    sujeitoST: cfg.sujeitoST,
     cest: cfg.cest ?? null,
     origem: cfg.origem,
     cfop: cfg.cfop,
     cstOrCsosn: cfg.cstOrCsosn,
     aliqIcms: cfg.aliqIcms,
+    cstIpi: cfg.cstIpi,
+    aliqIpi: cfg.aliqIpi,
     cstPis: cfg.cstPis,
     aliqPis: cfg.aliqPis,
     cstCofins: cfg.cstCofins,

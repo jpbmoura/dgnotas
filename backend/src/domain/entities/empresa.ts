@@ -7,6 +7,18 @@ export type RegimeTributario = 'simples' | 'mei' | 'presumido' | 'real';
 export type StatusEmpresa = 'ativa' | 'pendente' | 'inativa';
 export type Ambiente = 'homologacao' | 'producao';
 
+/**
+ * Regimes de tributação especiais usados em NFS-e municipal.
+ * `null` significa "sem regime especial".
+ */
+export type RegimeEspecial =
+  | 'microempresa_municipal'
+  | 'estimativa'
+  | 'sociedade_profissionais'
+  | 'cooperativa'
+  | 'mei'
+  | 'me_epp_simples';
+
 export interface Endereco {
   cep: CEP;
   logradouro: string;
@@ -36,17 +48,24 @@ export interface EmpresaProps {
   razaoSocial: string;
   nomeFantasia: string;
   cnpj: CNPJ;
+  isentoIE: boolean;
   inscricaoEstadual: string | null;
   inscricaoMunicipal: string | null;
   cnaePrincipal: CNAE;
   cnaesSecundarios: CNAE[];
   regimeTributario: RegimeTributario;
+  regimeEspecial: RegimeEspecial | null;
   status: StatusEmpresa;
   endereco: Endereco;
   ambiente: Ambiente;
   numeracao: NumeracaoNotas;
   enviarEmailAutomatico: boolean;
   certificado: CertificadoDigital | null;
+  email: string | null;
+  /** Telefone armazenado como dígitos puros (DDD + número), 10 ou 11 dígitos. */
+  telefone: string | null;
+  /** Lista de e-mails para envio de relatórios. */
+  emailsRelatorios: string[];
   ultimaEmissaoEm: Date | null;
   createdAt: Date;
   updatedAt: Date;
@@ -77,35 +96,47 @@ export class Empresa extends AggregateRoot<EmpresaProps> {
     razaoSocial: string;
     nomeFantasia: string;
     cnpj: CNPJ;
+    isentoIE: boolean;
     inscricaoEstadual: string | null;
     inscricaoMunicipal: string | null;
     cnaePrincipal: CNAE;
     cnaesSecundarios: CNAE[];
     regimeTributario: RegimeTributario;
+    regimeEspecial: RegimeEspecial | null;
     endereco: Endereco;
     ambiente: Ambiente;
     numeracao: NumeracaoNotas;
     enviarEmailAutomatico: boolean;
     certificado: CertificadoDigital | null;
+    email: string | null;
+    telefone: string | null;
+    emailsRelatorios: string[];
     now: Date;
   }): Empresa {
+    const ieNormalizada = input.isentoIE ? null : normalizeOptional(input.inscricaoEstadual);
+
     const empresa = new Empresa(
       {
         ownerUserId: input.ownerUserId,
         razaoSocial: input.razaoSocial.trim(),
         nomeFantasia: input.nomeFantasia.trim(),
         cnpj: input.cnpj,
-        inscricaoEstadual: normalizeOptional(input.inscricaoEstadual),
+        isentoIE: input.isentoIE,
+        inscricaoEstadual: ieNormalizada,
         inscricaoMunicipal: normalizeOptional(input.inscricaoMunicipal),
         cnaePrincipal: input.cnaePrincipal,
         cnaesSecundarios: input.cnaesSecundarios,
         regimeTributario: input.regimeTributario,
+        regimeEspecial: input.regimeEspecial,
         status: 'pendente',
         endereco: input.endereco,
         ambiente: input.ambiente,
         numeracao: input.numeracao,
         enviarEmailAutomatico: input.enviarEmailAutomatico,
         certificado: input.certificado,
+        email: normalizeOptional(input.email),
+        telefone: normalizeTelefone(input.telefone),
+        emailsRelatorios: normalizeEmailsList(input.emailsRelatorios),
         ultimaEmissaoEm: null,
         createdAt: input.now,
         updatedAt: input.now,
@@ -128,17 +159,22 @@ export class Empresa extends AggregateRoot<EmpresaProps> {
   get razaoSocial(): string { return this.props.razaoSocial; }
   get nomeFantasia(): string { return this.props.nomeFantasia; }
   get cnpj(): CNPJ { return this.props.cnpj; }
+  get isentoIE(): boolean { return this.props.isentoIE; }
   get inscricaoEstadual(): string | null { return this.props.inscricaoEstadual; }
   get inscricaoMunicipal(): string | null { return this.props.inscricaoMunicipal; }
   get cnaePrincipal(): CNAE { return this.props.cnaePrincipal; }
   get cnaesSecundarios(): CNAE[] { return this.props.cnaesSecundarios; }
   get regimeTributario(): RegimeTributario { return this.props.regimeTributario; }
+  get regimeEspecial(): RegimeEspecial | null { return this.props.regimeEspecial; }
   get status(): StatusEmpresa { return this.props.status; }
   get endereco(): Endereco { return this.props.endereco; }
   get ambiente(): Ambiente { return this.props.ambiente; }
   get numeracao(): NumeracaoNotas { return this.props.numeracao; }
   get enviarEmailAutomatico(): boolean { return this.props.enviarEmailAutomatico; }
   get certificado(): CertificadoDigital | null { return this.props.certificado; }
+  get email(): string | null { return this.props.email; }
+  get telefone(): string | null { return this.props.telefone; }
+  get emailsRelatorios(): string[] { return this.props.emailsRelatorios; }
   get ultimaEmissaoEm(): Date | null { return this.props.ultimaEmissaoEm; }
   get createdAt(): Date { return this.props.createdAt; }
   get updatedAt(): Date { return this.props.updatedAt; }
@@ -155,31 +191,43 @@ export class Empresa extends AggregateRoot<EmpresaProps> {
     razaoSocial: string;
     nomeFantasia: string;
     cnpj: CNPJ;
+    isentoIE: boolean;
     inscricaoEstadual: string | null;
     inscricaoMunicipal: string | null;
     cnaePrincipal: CNAE;
     cnaesSecundarios: CNAE[];
     regimeTributario: RegimeTributario;
+    regimeEspecial: RegimeEspecial | null;
     endereco: Endereco;
     ambiente: Ambiente;
     numeracao: NumeracaoNotas;
     enviarEmailAutomatico: boolean;
     certificado: CertificadoDigital | null;
+    email: string | null;
+    telefone: string | null;
+    emailsRelatorios: string[];
     now: Date;
   }): void {
     this.props.razaoSocial = input.razaoSocial.trim();
     this.props.nomeFantasia = input.nomeFantasia.trim();
     this.props.cnpj = input.cnpj;
-    this.props.inscricaoEstadual = normalizeOptional(input.inscricaoEstadual);
+    this.props.isentoIE = input.isentoIE;
+    this.props.inscricaoEstadual = input.isentoIE
+      ? null
+      : normalizeOptional(input.inscricaoEstadual);
     this.props.inscricaoMunicipal = normalizeOptional(input.inscricaoMunicipal);
     this.props.cnaePrincipal = input.cnaePrincipal;
     this.props.cnaesSecundarios = input.cnaesSecundarios;
     this.props.regimeTributario = input.regimeTributario;
+    this.props.regimeEspecial = input.regimeEspecial;
     this.props.endereco = input.endereco;
     this.props.ambiente = input.ambiente;
     this.props.numeracao = input.numeracao;
     this.props.enviarEmailAutomatico = input.enviarEmailAutomatico;
     this.props.certificado = input.certificado;
+    this.props.email = normalizeOptional(input.email);
+    this.props.telefone = normalizeTelefone(input.telefone);
+    this.props.emailsRelatorios = normalizeEmailsList(input.emailsRelatorios);
     this.props.updatedAt = input.now;
     this.recomputeStatus();
     this.invariantes();
@@ -208,11 +256,25 @@ export class Empresa extends AggregateRoot<EmpresaProps> {
     if (!this.props.nomeFantasia) {
       throw new Error('nome fantasia obrigatório');
     }
+    if (this.props.isentoIE && this.props.inscricaoEstadual !== null) {
+      throw new Error('empresa isenta de IE não pode ter inscrição estadual preenchida');
+    }
     if (this.props.numeracao.nfeProximoNumero < 1 || this.props.numeracao.nfeSerie < 1) {
       throw new Error('numeração NF-e inválida');
     }
     if (this.props.numeracao.nfseProximoNumero < 1 || this.props.numeracao.nfseSerie < 1) {
       throw new Error('numeração NFS-e inválida');
+    }
+    if (this.props.telefone !== null && !/^[0-9]{10,11}$/.test(this.props.telefone)) {
+      throw new Error('telefone deve conter apenas dígitos (10 ou 11)');
+    }
+    if (this.props.email !== null && !EMAIL_REGEX.test(this.props.email)) {
+      throw new Error('e-mail da empresa em formato inválido');
+    }
+    for (const e of this.props.emailsRelatorios) {
+      if (!EMAIL_REGEX.test(e)) {
+        throw new Error(`e-mail de relatório em formato inválido: ${e}`);
+      }
     }
   }
 
@@ -242,8 +304,30 @@ export class Empresa extends AggregateRoot<EmpresaProps> {
   }
 }
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 function normalizeOptional(value: string | null): string | null {
   if (value === null) return null;
   const trimmed = value.trim();
   return trimmed === '' ? null : trimmed;
+}
+
+function normalizeTelefone(value: string | null): string | null {
+  if (value === null) return null;
+  const digits = value.replace(/\D/g, '');
+  return digits === '' ? null : digits;
+}
+
+function normalizeEmailsList(values: string[]): string[] {
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const raw of values) {
+    const t = raw.trim();
+    if (t === '') continue;
+    const lower = t.toLowerCase();
+    if (seen.has(lower)) continue;
+    seen.add(lower);
+    out.push(t);
+  }
+  return out;
 }

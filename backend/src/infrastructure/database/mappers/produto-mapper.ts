@@ -1,6 +1,8 @@
 import {
   Produto,
+  type Garantia,
   type LocalIncidencia,
+  type Plataforma,
   type StatusItem,
   type TipoItem,
 } from '../../../domain/entities/produto';
@@ -12,21 +14,22 @@ export interface ProdutoRow {
   tipo: TipoItem;
   codigo: string;
   nome: string;
+  nome_fiscal: string | null;
   descricao: string;
   valor: string | number;
   status: StatusItem;
-  cst_ibs_cbs: string;
-  c_class_trib: string;
+  plataforma: Plataforma | null;
+  garantia: Garantia | null;
   // Produto
   unidade: string | null;
   ncm: string | null;
-  gtin: string | null;
-  sujeito_st: boolean | null;
   cest: string | null;
   origem: string | null;
   cfop: string | null;
   cst_or_csosn: string | null;
   aliq_icms: string | number | null;
+  cst_ipi: string | null;
+  aliq_ipi: string | number | null;
   cst_pis: string | null;
   aliq_pis: string | number | null;
   cst_cofins: string | null;
@@ -60,13 +63,13 @@ export const produtoMapper = {
         ? {
             unidade: row.unidade ?? '',
             ncm: row.ncm ? NCM.reconstitute(row.ncm) : null,
-            gtin: row.gtin,
-            sujeitoST: row.sujeito_st ?? false,
             cest: row.cest,
             origem: row.origem ?? '',
             cfop: row.cfop ?? '',
             cstOrCsosn: row.cst_or_csosn ?? '',
             aliqIcms: toNumber(row.aliq_icms) ?? 0,
+            cstIpi: row.cst_ipi ?? '',
+            aliqIpi: toNumber(row.aliq_ipi) ?? 0,
             cstPis: row.cst_pis ?? '',
             aliqPis: toNumber(row.aliq_pis) ?? 0,
             cstCofins: row.cst_cofins ?? '',
@@ -112,13 +115,12 @@ export const produtoMapper = {
       tipo: row.tipo,
       codigo: row.codigo,
       nome: row.nome,
+      nomeFiscal: row.nome_fiscal,
       descricao: row.descricao,
       valor: toNumber(row.valor) ?? 0,
       status: row.status,
-      ibsCbs: {
-        cstIbsCbs: row.cst_ibs_cbs,
-        cClassTrib: row.c_class_trib,
-      },
+      plataforma: row.plataforma,
+      garantia: row.garantia,
       produtoConfig,
       servicoConfig,
       createdAt: toDate(row.created_at),
