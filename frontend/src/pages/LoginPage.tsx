@@ -1,16 +1,16 @@
-import { useState, type FormEvent } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { AuthShell } from '../components/AuthShell';
-import { FormField } from '../components/FormField';
-import { signIn } from '../lib/auth-client';
+import { useState, type FormEvent } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { AuthShell } from "../components/AuthShell";
+import { FormField } from "../components/FormField";
+import { signIn } from "../lib/auth-client";
 
 export function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const from = (location.state as { from?: string } | null)?.from ?? '/app';
+  const from = (location.state as { from?: string } | null)?.from ?? "/app";
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -24,7 +24,9 @@ export function LoginPage() {
     setLoading(false);
 
     if (signInError) {
-      setError('E-mail ou senha não conferem. Confere os dados e tenta de novo.');
+      setError(
+        "E-mail ou senha não conferem. Confere os dados e tenta de novo.",
+      );
       return;
     }
 
@@ -42,8 +44,11 @@ export function LoginPage() {
       subtitle="Acessa sua conta pra emitir e acompanhar suas notas."
       footer={
         <>
-          Ainda não tem conta?{' '}
-          <Link to="/cadastro" className="text-[var(--ink)] font-medium hover:underline">
+          Ainda não tem conta?{" "}
+          <Link
+            to="/cadastro"
+            className="text-[var(--ink)] font-medium hover:underline"
+          >
             Criar conta
           </Link>
         </>
@@ -79,10 +84,10 @@ export function LoginPage() {
 
         <button
           type="submit"
-          disabled={loading}
+          disabled={true}
           className="btn-primary h-12 px-6 rounded-lg font-medium text-sm disabled:opacity-60 disabled:cursor-not-allowed"
         >
-          {loading ? 'Entrando...' : 'Entrar'}
+          {loading ? "Entrando..." : "Entrar"}
         </button>
       </form>
     </AuthShell>
